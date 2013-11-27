@@ -1,4 +1,4 @@
-import zipfile, csv
+import zipfile, csv, bz2
 from ostn02python import OSGB, OSTN02
 
 if __name__=="__main__":
@@ -10,14 +10,16 @@ if __name__=="__main__":
 	data2 = csv.DictReader(data)
 	skipDeleted = True
 	count = 0
+	nodeId = -1
 
-	#outfi = bz2.BZ2File("postcode.osm.bz2", "w")	
+	fina = bz2.BZ2File("postcode.osm.bz2", "w")	
 
 	if isinstance(fina, basestring):
-		self.fi = open(fina, "wt")
+		fi = open(fina, "wt")
 	else:
-		self.fi = fina
-	self.fi.write("<?xml version='1.0' encoding='UTF-8'?>\n")
+		fi = fina
+	fi.write("<?xml version='1.0' encoding='UTF-8'?>\n")
+	fi.write("<osm version='0.6' upload='true' generator='JOSM'>\n")
 
 	for li in data2:
 		if len(li['oseast1m']) == 0: continue
@@ -28,12 +30,23 @@ if __name__=="__main__":
 		doterm = li['doterm']
 		if len(doterm) > 0 and skipDeleted: continue
 
-
 		try:
 			(x,y,h) = OSTN02.OSGB36_to_ETRS89 (e, n)
 			(gla, glo) = OSGB.grid_to_ll(x, y)
-			print pcs, doterm, qual, gla, glo, count
+			if count % 100 == 0:
+				print pcs, doterm, qual, gla, glo, count
 			count += 1
+
+			fi.write("<node id='{0}' lat='{1}' lon='{2}'>\n".format(nodeId, gla, glo))
+			fi.write("<tag k='addr:postcode' v='{0}' />\n".format(pcs))
+			fi.write("<tag k='onspd_postcode_centre' v='yes' />\n")
+			fi.write("</node>\n")
+
+			nodeId -= 1
+
 		except:
 			print pcs, "conversion failed"
+
+	fi.write("</osm>\n")
+	fi.close()
 
