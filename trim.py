@@ -5,7 +5,7 @@
 #https://creativecommons.org/publicdomain/zero/1.0/
 
 import xml.parsers.expat as expat
-import pickle, bz2
+import pickle, bz2, sys
 from xml.sax.saxutils import escape, quoteattr
 
 class ExpatParse(object):
@@ -232,9 +232,13 @@ class WriteOutput(ExpatParse):
 
 if __name__=="__main__":
 	#fi = open('out.osm',"rt")
-	fi = bz2.BZ2File("/media/noraid/tim/planet-130327-recomp.osm.bz2","r")
 
-	roi = [0.,90.], [-180.,0.]
+	finaIn = "/media/noraid/tim/planet-130327-recomp.osm.bz2"
+	if len(sys.argv) >= 2:
+		finaIn = sys.argv[1]
+
+	fi = bz2.BZ2File(finaIn,"r")
+	roi = [50.7217072, 51.1475977], [-0.1424041, 0.8675128]
 
 	#Find nodes in area of interest
 	print "Finding nodes"
@@ -262,11 +266,13 @@ if __name__=="__main__":
 		referencesNodes = roiWays.referencesNodes
 		pickle.dump(foundWays, open("foundWays.bin","wb"), protocol=-1)
 		pickle.dump(referencesNodes, open("referencesNodes.bin","wb"), protocol=-1)
+		referencesNodes.update(foundNodes)
 		del roiWays
 		del foundNodes
 	else:
 		foundWays = pickle.load(open("foundWays.bin","rb"))
 		referencesNodes = pickle.load(open("referencesNodes.bin","rb"))
+		referencesNodes.update(foundNodes)
 
 	#Get relations that reference ROI objects
 	print "Find relations"
@@ -284,7 +290,7 @@ if __name__=="__main__":
 
 	#Write output
 	print "Write output"
-	outfi = bz2.BZ2File("/media/noraid/tim/planet-130327-recomp.osm.bz2", "w")
+	outfi = bz2.BZ2File("out.osm.bz2", "w")
 	writeOutput = WriteOutput(outfi)
 	writeOutput.roiNodes = referencesNodes
 	writeOutput.roiWays = foundWays	

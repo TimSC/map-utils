@@ -26,7 +26,7 @@ if __name__=="__main__":
 		e = float(li['oseast1m'])
 		n = float(li['osnrth1m'])
 		qual = int(li['osgrdind'])
-		pcs = li['pcd']
+		pcs = li['pcds']
 		doterm = li['doterm']
 		if len(doterm) > 0 and skipDeleted: continue
 
