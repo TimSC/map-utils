@@ -209,10 +209,10 @@ class WriteOutput(ExpatParse):
 			if objId < 0 and ty == "relation" and nid not in self.roiRelations: self.missingMem = 1
 
 		if not self.skip and not self.missingMem:
-			openTag = "<"+name
+			openTag = unicode("<")+name
 			for k in attrs:
-				openTag += " "+k+"="+quoteattr(escape(str(attrs[k])))
-			openTag += ">\n"
+				openTag += unicode(" ")+k+unicode("=")+quoteattr(escape(unicode(attrs[k])))
+			openTag += unicode(">\n")
 			self.fi.write(openTag.encode("utf-8"))
 
 		if self.depth == 1 and self.roi is not None:
