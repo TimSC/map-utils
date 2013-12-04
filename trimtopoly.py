@@ -35,7 +35,7 @@ if __name__=="__main__":
 	print "roi", boundingObj
 
 	#Load data to trim
-	finaIn = "surrey-fosm-dec-2013.osm.bz2"
+	finaIn = "surrey-contours-untrimmed.osm.bz2"
 	if len(sys.argv) >= 2:
 		finaIn = sys.argv[1]
 

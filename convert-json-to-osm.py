@@ -1,8 +1,8 @@
 
 #ogr2ogr -f "GeoJSON" mon.json 20131030_ScheduledMonument.shp 20131030_ScheduledMonument
 
-import json, bz2
-from ostn02 import OSTN02, OSGB
+import json, bz2, sys, os, string
+from ostn02python import OSTN02, OSGB
 from xml.sax.saxutils import escape, quoteattr
 
 idpos = -1
@@ -99,15 +99,31 @@ def MultiPolyToOsm(multipoly, outFi, nextIds, tags):
 
 def ConvertTags(tags):
 	out = {}
-	out['name'] = tags['Name']
-	out['source'] = 'english_heritage_opendata'
-	out['leisure'] = "garden"
-	out['scheduled_monument:id'] = str(tags['ListEntry'])
+
+	if 0:
+		out['name'] = tags['Name']
+		out['source'] = 'english_heritage_opendata'
+		out['leisure'] = "garden"
+		out['scheduled_monument:id'] = str(tags['ListEntry'])
+
+	if 1:
+		out['name'] = string.capwords(tags['Name'])
+		out['source'] = 'english_heritage_opendata'
+		out['scheduled_monument'] = str(tags['Grade'])
+		out['scheduled_monument:id'] = str(tags['ListEntry'])
+
 	return out
 
 if __name__ == "__main__":
+	fina = "mon.json"
+	if len(sys.argv)>=2:
+		fina = sys.argv[1]
 
-	data = json.load(open("mon.json"))
+	psl = os.path.splitext(fina)
+	if psl[-1] == ".bz2":
+		data = json.load(bz2.BZ2File(fina, "r"))
+	else:
+		data = json.load(open(fina))
 
 	ty = data['type']
 	print ty

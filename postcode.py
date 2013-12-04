@@ -38,7 +38,7 @@ if __name__=="__main__":
 			count += 1
 
 			fi.write("<node id='{0}' lat='{1}' lon='{2}'>\n".format(nodeId, gla, glo))
-			fi.write("<tag k='addr:postcode' v='{0}' />\n".format(pcs))
+			fi.write("<tag k='name' v='{0}' />\n".format(pcs))
 			fi.write("<tag k='onspd_postcode_centre' v='yes' />\n")
 			fi.write("</node>\n")
 
