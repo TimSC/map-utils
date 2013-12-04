@@ -10,7 +10,7 @@ import trimutils
 if __name__=="__main__":
 	#fi = open('out.osm',"rt")
 
-	finaIn = "surrey-fosm-dec-2013.osm.bz2"
+	finaIn = "surreyboundary.osm.bz2"
 	if len(sys.argv) >= 2:
 		finaIn = sys.argv[1]
 
@@ -28,7 +28,7 @@ if __name__=="__main__":
 	print "Finding nodes"
 	if 1:
 		roiNodes = trimutils.RoiNodes()
-		roiNodes.roi = roi
+		roiNodes.SetRoiRect(roi)
 		roiNodes.ParseFile(fi)
 		foundNodes = roiNodes.foundNodes
 		objTypeCount = roiNodes.objTypeCount

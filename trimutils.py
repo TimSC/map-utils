@@ -1,5 +1,8 @@
 import xml.parsers.expat as expat
 from xml.sax.saxutils import escape, quoteattr
+from shapely.geometry import LineString, Polygon, MultiPolygon, Point
+from shapely.geos import PredicateError
+from shapely.validation import explain_validity
 
 class ExpatParse(object):
 	def __init__(self):
@@ -49,14 +52,20 @@ class RoiNodes(ExpatParse):
 		if self.depth == 2 and name == "node":
 			lat = float(attrs['lat'])
 			lon = float(attrs['lon'])
-			if lat >= self.roi[0][0] \
-				and lat <= self.roi[0][1] \
-				and lon >= self.roi[1][0] \
-				and lon <= self.roi[1][1]:
+			pt = Point((lat, lon))
+
+			if self.roi.contains(pt):
 				self.foundNodes.add(int(attrs['id']))
 
 	def HandleEndElement(self, name): 
 		ExpatParse.HandleEndElement(self, name)
+
+	def SetRoiRect(self, rect):
+		self.roi = Polygon([(rect[0][0], rect[1][0]), (rect[0][0], rect[1][1]), 
+			(rect[0][1], rect[1][1]), (rect[0][1], rect[1][0])])
+
+	def SetRoiShapely(self, shp):
+		self.roi = shp
 
 class RoiWays(ExpatParse):
 	def __init__(self):
