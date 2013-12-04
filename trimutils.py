@@ -17,6 +17,7 @@ class ExpatParse(object):
 
 	def ParseFile(self, fi):
 		fi.seek(0)
+		self.fiTmp = fi
 		self.parser.ParseFile(fi)
 
 	def HandleCharData(self, data):
@@ -42,6 +43,11 @@ class RoiNodes(ExpatParse):
 
 	def HandleStartElement(self, name, attrs):
 		ExpatParse.HandleStartElement(self, name, attrs)
+		if self.depth >= 4:
+			print self.tags
+			pos = self.fiTmp.tell()
+			print "pos", pos
+			print "attr", self.attr
 		assert self.depth < 4
 		if self.depth == 2:
 			if name in self.objTypeCount:
