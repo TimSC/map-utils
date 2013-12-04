@@ -3,6 +3,7 @@ from xml.sax.saxutils import escape, quoteattr
 from shapely.geometry import LineString, Polygon, MultiPolygon, Point
 from shapely.geos import PredicateError
 from shapely.validation import explain_validity
+from shapely.prepared import prep
 
 class ExpatParse(object):
 	def __init__(self):
@@ -65,7 +66,7 @@ class RoiNodes(ExpatParse):
 			(rect[0][1], rect[1][1]), (rect[0][1], rect[1][0])])
 
 	def SetRoiShapely(self, shp):
-		self.roi = shp
+		self.roi = prep(shp)
 
 class RoiWays(ExpatParse):
 	def __init__(self):
